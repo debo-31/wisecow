@@ -76,24 +76,53 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Check if KUBE_CONFIG secret exists
+        id: check_secret
+        run: |
+          if [ -z "${{ secrets.KUBE_CONFIG }}" ]; then
+            echo "KUBE_CONFIG secret not configured"
+            echo "has_secret=false" >> $GITHUB_OUTPUT
+          else
+            echo "KUBE_CONFIG secret found"
+            echo "has_secret=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Set up kubectl
+        if: steps.check_secret.outputs.has_secret == 'true'
         uses: azure/setup-kubectl@v3
         with:
           version: 'v1.27.0'
 
       - name: Configure kubectl
+        if: steps.check_secret.outputs.has_secret == 'true'
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
 
       - name: Update image in deployment
+        if: steps.check_secret.outputs.has_secret == 'true'
         run: |
           IMAGE_TAG="${{ github.sha }}"
           kubectl set image deployment/wisecow wisecow=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${IMAGE_TAG:0:7} -n default || true
 
       - name: Verify deployment
+        if: steps.check_secret.outputs.has_secret == 'true'
         run: |
           kubectl rollout status deployment/wisecow -n default --timeout=5m || true
           kubectl get pods -n default -l app=wisecow
+
+      - name: Deployment Info
+        if: steps.check_secret.outputs.has_secret == 'false'
+        run: |
+          echo "✅ Docker image built and pushed successfully!"
+          echo ""
+          echo "📝 To enable Kubernetes deployment:"
+          echo "1. Add KUBE_CONFIG secret to GitHub repository"
+          echo "2. Encode your kubeconfig file: cat ~/.kube/config | base64"
+          echo "3. Add as GitHub secret: Settings > Secrets and variables > Actions > New repository secret"
+          echo "4. Name: KUBE_CONFIG"
+          echo ""
+          echo "📦 Image pushed to: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+          echo "🏷️  Tag: sha-${{ github.sha }}"
 
