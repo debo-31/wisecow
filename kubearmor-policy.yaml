@@ -1,0 +1,90 @@
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: wisecow-zero-trust-policy
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: wisecow
+  
+  # Default action: Audit mode to detect violations
+  action: Audit
+  
+  # Process execution rules - whitelist allowed processes
+  process:
+    matchPolicies:
+    # Allow bash and sh for the container entrypoint
+    - action: Allow
+      pattern: /bin/bash
+    - action: Allow
+      pattern: /bin/sh
+    # Allow the wisecow script
+    - action: Allow
+      pattern: /app/wisecow.sh
+    # Allow fortune command
+    - action: Allow
+      pattern: /usr/bin/fortune
+    # Allow cowsay command
+    - action: Allow
+      pattern: /usr/bin/cowsay
+    # Allow netcat for listening
+    - action: Allow
+      pattern: /bin/nc
+    - action: Allow
+      pattern: /usr/bin/nc
+    # Allow sleep command
+    - action: Allow
+      pattern: /bin/sleep
+  
+  # File access rules - restrict file operations
+  file:
+    matchPolicies:
+    # Allow reading from /app directory
+    - action: Allow
+      pattern: /app/.*
+      readOnly: true
+    # Allow reading from /usr/bin (for commands)
+    - action: Allow
+      pattern: /usr/bin/.*
+      readOnly: true
+    # Allow reading from /usr/share (for fortune data)
+    - action: Allow
+      pattern: /usr/share/.*
+      readOnly: true
+    # Allow reading from /etc (for system configs)
+    - action: Allow
+      pattern: /etc/.*
+      readOnly: true
+    # Allow reading from /lib and /lib64
+    - action: Allow
+      pattern: /lib/.*
+      readOnly: true
+    - action: Allow
+      pattern: /lib64/.*
+      readOnly: true
+    # Allow reading from /proc
+    - action: Allow
+      pattern: /proc/.*
+      readOnly: true
+    # Allow reading from /dev
+    - action: Allow
+      pattern: /dev/.*
+      readOnly: true
+    # Allow writing to /tmp
+    - action: Allow
+      pattern: /tmp/.*
+  
+  # Network rules - restrict network access
+  network:
+    matchPolicies:
+    # Allow listening on port 4499 (TCP)
+    - action: Allow
+      protocol: tcp
+      direction: inbound
+      port: 4499
+    # Allow DNS queries (UDP port 53)
+    - action: Allow
+      protocol: udp
+      direction: outbound
+      port: 53
