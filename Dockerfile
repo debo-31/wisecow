@@ -1,3 +1,10 @@
+# ============================================================================
+# PROBLEM STATEMENT 1: Containerization & Deployment
+# ============================================================================
+# Dockerfile for Wisecow application
+# This container image is used for Kubernetes deployment with TLS support
+# ============================================================================
+
 # Use a lightweight base image
 FROM ubuntu:22.04
 

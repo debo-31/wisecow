@@ -1,8 +1,22 @@
 #!/usr/bin/env python3
 """
+================================================================================
+PROBLEM STATEMENT 2: System Monitoring Scripts
+================================================================================
 System Health Monitoring Script
+
 Monitors CPU, memory, disk space, and running processes.
 Sends alerts when metrics exceed predefined thresholds.
+
+Features:
+  - CPU usage monitoring (threshold: 80%)
+  - Memory usage monitoring (threshold: 80%)
+  - Disk space monitoring (threshold: 80%)
+  - Running processes monitoring (threshold: 100)
+  - Top 5 processes by CPU and memory
+  - File and console logging
+  - Exit codes for automation (0: healthy, 1: issues detected)
+================================================================================
 """
 
 import psutil

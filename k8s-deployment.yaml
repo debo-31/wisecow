@@ -1,3 +1,14 @@
+# ============================================================================
+# PROBLEM STATEMENT 1: Containerization & Deployment
+# ============================================================================
+# Kubernetes Deployment Manifest for Wisecow Application
+# Features:
+#   - Multi-replica deployment (2 replicas) for high availability
+#   - Resource requests and limits for proper resource management
+#   - Liveness and readiness probes for health checking
+#   - TCP health checks on port 4499
+# ============================================================================
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,6 +17,7 @@ metadata:
   labels:
     app: wisecow
 spec:
+  # Multi-replica deployment for high availability
   replicas: 2
   selector:
     matchLabels:
@@ -22,6 +34,7 @@ spec:
         ports:
         - containerPort: 4499
           name: http
+        # Resource requests and limits
         resources:
           requests:
             memory: "64Mi"
@@ -29,11 +42,13 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "200m"
+        # Liveness probe - checks if container is alive
         livenessProbe:
           tcpSocket:
             port: 4499
           initialDelaySeconds: 10
           periodSeconds: 10
+        # Readiness probe - checks if container is ready to receive traffic
         readinessProbe:
           tcpSocket:
             port: 4499

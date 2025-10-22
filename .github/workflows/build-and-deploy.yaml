@@ -1,3 +1,16 @@
+# ============================================================================
+# PROBLEM STATEMENT 1: Containerization & Deployment
+# ============================================================================
+# GitHub Actions CI/CD Pipeline for Wisecow Application
+#
+# This workflow:
+#   1. Builds Docker image on push to main/master
+#   2. Pushes image to GitHub Container Registry (GHCR)
+#   3. Deploys to Kubernetes cluster
+#
+# Triggers: Push to main/master branches, Pull requests
+# ============================================================================
+
 name: Build and Deploy Wisecow
 
 on:

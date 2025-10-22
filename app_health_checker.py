@@ -1,8 +1,23 @@
 #!/usr/bin/env python3
 """
+================================================================================
+PROBLEM STATEMENT 2: System Monitoring Scripts
+================================================================================
 Application Health Checker Script
+
 Checks application uptime and HTTP status codes.
 Determines if application is 'up' or 'down'.
+
+Features:
+  - HTTP endpoint availability checking
+  - HTTP status code validation
+  - Retry logic (3 attempts with 2-second delays)
+  - Timeout: 5 seconds default
+  - JSON output for integration
+  - Detailed error handling
+  - File and console logging
+  - Exit codes for automation (0: healthy, 1: issues detected)
+================================================================================
 """
 
 import requests

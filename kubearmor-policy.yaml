@@ -1,3 +1,21 @@
+# ============================================================================
+# PROBLEM STATEMENT 3: KubeArmor Zero-Trust Policy
+# ============================================================================
+# Zero-Trust Security Policy for Wisecow Kubernetes Workload
+#
+# Features:
+#   - Process execution whitelist
+#   - File access restrictions
+#   - Network policy enforcement
+#   - Audit mode for safe testing
+#   - Easy switch to enforce mode
+#
+# This policy implements a zero-trust security model by:
+#   1. Whitelisting only necessary processes
+#   2. Restricting file access to read-only for system directories
+#   3. Limiting network access to required ports
+# ============================================================================
+
 apiVersion: security.kubearmor.com/v1
 kind: KubeArmorPolicy
 metadata:
@@ -7,10 +25,10 @@ spec:
   selector:
     matchLabels:
       app: wisecow
-  
-  # Default action: Audit mode to detect violations
+
+  # Default action: Audit mode to detect violations without blocking
   action: Audit
-  
+
   # Process execution rules - whitelist allowed processes
   process:
     matchPolicies:
