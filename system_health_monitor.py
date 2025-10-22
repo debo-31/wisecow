@@ -96,16 +96,26 @@ def check_running_processes():
 def get_top_processes():
     """Get top 5 processes by CPU and memory usage."""
     logger.info("\n--- Top 5 Processes by CPU Usage ---")
-    processes = sorted(psutil.process_iter(['pid', 'name', 'cpu_percent']), 
-                      key=lambda p: p.info['cpu_percent'], reverse=True)[:5]
-    for proc in processes:
-        logger.info(f"  {proc.info['name']}: {proc.info['cpu_percent']}%")
-    
+    try:
+        processes = sorted(
+            [p for p in psutil.process_iter(['pid', 'name', 'cpu_percent'])
+             if p.info['cpu_percent'] is not None],
+            key=lambda p: p.info['cpu_percent'], reverse=True)[:5]
+        for proc in processes:
+            logger.info(f"  {proc.info['name']}: {proc.info['cpu_percent']}%")
+    except Exception as e:
+        logger.warning(f"Could not retrieve CPU process info: {e}")
+
     logger.info("\n--- Top 5 Processes by Memory Usage ---")
-    processes = sorted(psutil.process_iter(['pid', 'name', 'memory_percent']), 
-                      key=lambda p: p.info['memory_percent'], reverse=True)[:5]
-    for proc in processes:
-        logger.info(f"  {proc.info['name']}: {proc.info['memory_percent']}%")
+    try:
+        processes = sorted(
+            [p for p in psutil.process_iter(['pid', 'name', 'memory_percent'])
+             if p.info['memory_percent'] is not None],
+            key=lambda p: p.info['memory_percent'], reverse=True)[:5]
+        for proc in processes:
+            logger.info(f"  {proc.info['name']}: {proc.info['memory_percent']}%")
+    except Exception as e:
+        logger.warning(f"Could not retrieve memory process info: {e}")
 
 
 def generate_report():
